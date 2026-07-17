@@ -5,9 +5,9 @@ Unless superseded by a later specification:
 ```text
 username registration: free, first come first served
 username ownership: max 1 per wallet/identity (AD-10)
-username transfer: on-chain (frees slot for a new create)
-username create rate: limited (e.g. 1 / 24h per identity)
-username hardware lock: none
+username transfer: DISABLED for now (removed to prevent squatting/flipping)
+username create rate: limited (e.g. 1 / 24h per identity, requires account age ≥ 7d)
+username squatting prevention: account age ≥ 7 days before first username; inactivity release after 90 days no presence
 account authority: wallet
 login: passkey
 passkey policy: every interactive app open (AD-6)
@@ -29,13 +29,15 @@ attachments: direct encrypted transfer only (AD-20)
 direct messages: end-to-end encrypted
 private groups: creator controlled; group_id→creator on-chain (AD-23)
 public chatrooms: no owner
+public room moderation: votekick (⅔ majority), automod (rate limits + spam filter), local blocks
 public room retention default: 24h inactivity; relay-overridable (AD-17)
-public room moderation: local and relay policy only
+public room cooldown: per-user rate limit (e.g. 5 msgs/min default); anti-flood on join
 profile: username + bio; no avatar (AD-24)
 random matching: numeric reputation with published weights (AD-18)
 routing: direct by default; private routed for randoms; opt-in multi-hop (AD-21)
 nearby discovery: post-MVP (AD-19)
 relay admission: open registry + checksums (AD-22)
+relay self-host: anyone can run relay on PC/VPS (Bun binary or Docker)
 relay incentives v1: grants only (AD-15)
 token supply/emissions: deferred past MVP (AD-13)
 validator selection: stake rank + power cap; min 4; target 7–21 (AD-14)

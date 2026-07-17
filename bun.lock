@@ -9,6 +9,8 @@
       "name": "@nettle/client",
       "version": "0.0.1",
       "dependencies": {
+        "@nettle/crypto": "workspace:*",
+        "@nettle/protocol": "workspace:*",
         "@nettle/types": "workspace:*",
       },
       "devDependencies": {
@@ -32,6 +34,13 @@
         "@nettle/crypto": "workspace:*",
         "@nettle/types": "workspace:*",
         "cbor2": "^1.7.0",
+      },
+    },
+    "packages/relay-standalone": {
+      "name": "@nettle/relay-standalone",
+      "version": "0.0.1",
+      "dependencies": {
+        "@nettle/types": "workspace:*",
       },
     },
     "packages/storage": {
@@ -271,6 +280,8 @@
     "@nettle/crypto": ["@nettle/crypto@workspace:packages/crypto"],
 
     "@nettle/protocol": ["@nettle/protocol@workspace:packages/protocol"],
+
+    "@nettle/relay-standalone": ["@nettle/relay-standalone@workspace:packages/relay-standalone"],
 
     "@nettle/storage": ["@nettle/storage@workspace:packages/storage"],
 

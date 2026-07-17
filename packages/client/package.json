@@ -5,7 +5,9 @@
   "main": "src/index.ts",
   "scripts": { "test": "bun test", "build": "tsc" },
   "dependencies": {
-    "@nettle/types": "workspace:*"
+    "@nettle/types": "workspace:*",
+    "@nettle/crypto": "workspace:*",
+    "@nettle/protocol": "workspace:*"
   },
   "devDependencies": {
     "bun-types": "latest"

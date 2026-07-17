@@ -2,7 +2,7 @@
  * @nettle/client — DevChainClient
  *
  * In-memory chain stub for development.
- * AD-10: max 1 username per wallet, free registration, free transfer.
+ * AD-10: max 1 username per wallet, no transfer, anti-squat.
  * Replaced when .in chain is ready.
  */
 
@@ -13,10 +13,48 @@ import type {
   IdentityId,
 } from "@nettle/types";
 
+/** Minimum account age before registering a username (7 days) */
+const MIN_ACCOUNT_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+
+/** Release username after 90 days of no presence */
+const INACTIVITY_RELEASE_MS = 90 * 24 * 60 * 60 * 1000;
+
+interface AccountMeta {
+  createdAt: number;
+  lastActiveAt: number;
+}
+
 export class DevChainClient implements ChainApiClient {
   private usernames = new Map<string, UsernameRecord>();
   private walletToUsername = new Map<string, string>();
   private history = new Map<string, UsernameRecord[]>();
+  private accounts = new Map<string, AccountMeta>(); // walletHex -> meta
+
+  /**
+   * Register an account (call on first wallet creation).
+   * Starts the account age clock.
+   */
+  registerAccount(wallet: WalletAddress): void {
+    const walletHex = Buffer.from(wallet).toString("hex");
+    if (!this.accounts.has(walletHex)) {
+      this.accounts.set(walletHex, {
+        createdAt: Date.now(),
+        lastActiveAt: Date.now(),
+      });
+    }
+  }
+
+  /**
+   * Record presence activity (call when user comes online).
+   * Resets inactivity timer.
+   */
+  recordActivity(wallet: WalletAddress): void {
+    const walletHex = Buffer.from(wallet).toString("hex");
+    const meta = this.accounts.get(walletHex);
+    if (meta) {
+      meta.lastActiveAt = Date.now();
+    }
+  }
 
   async registerUsername(
     username: string,
@@ -26,11 +64,39 @@ export class DevChainClient implements ChainApiClient {
     const walletHex = Buffer.from(wallet).toString("hex");
     const normalized = username.toLowerCase().trim();
 
+    // Anti-squat: require account age ≥ 7 days
+    const meta = this.accounts.get(walletHex);
+    if (!meta) {
+      throw new Error("Account not registered — call registerAccount first");
+    }
+    const accountAge = Date.now() - meta.createdAt;
+    if (accountAge < MIN_ACCOUNT_AGE_MS) {
+      const daysLeft = Math.ceil((MIN_ACCOUNT_AGE_MS - accountAge) / (24 * 60 * 60 * 1000));
+      throw new Error(`Account too new — wait ${daysLeft} more days before registering a username`);
+    }
+
+    // AD-10: max 1 per wallet
     if (this.walletToUsername.has(walletHex)) {
       throw new Error("Wallet already owns a username (AD-10)");
     }
-    if (this.usernames.has(normalized)) {
-      throw new Error("Username already taken");
+
+    // Check if username is taken AND release if previous owner inactive
+    const existing = this.usernames.get(normalized);
+    if (existing) {
+      const ownerHex = Buffer.from(existing.ownerWallet).toString("hex");
+      const ownerMeta = this.accounts.get(ownerHex);
+      if (ownerMeta) {
+        const inactiveFor = Date.now() - ownerMeta.lastActiveAt;
+        if (inactiveFor >= INACTIVITY_RELEASE_MS) {
+          // Release inactive username
+          this.usernames.delete(normalized);
+          this.walletToUsername.delete(ownerHex);
+        } else {
+          throw new Error("Username already taken");
+        }
+      } else {
+        throw new Error("Username already taken");
+      }
     }
 
     const record: UsernameRecord = {
@@ -53,30 +119,8 @@ export class DevChainClient implements ChainApiClient {
     return this.usernames.get(username.toLowerCase().trim()) ?? null;
   }
 
-  async transferUsername(
-    username: string,
-    newOwner: WalletAddress
-  ): Promise<UsernameRecord> {
-    const normalized = username.toLowerCase().trim();
-    const existing = this.usernames.get(normalized);
-    if (!existing) {
-      throw new Error("Username not found");
-    }
-
-    const oldWalletHex = Buffer.from(existing.ownerWallet).toString("hex");
-    this.walletToUsername.delete(oldWalletHex);
-
-    const updated: UsernameRecord = {
-      ...existing,
-      ownerWallet: newOwner,
-      registeredAt: Date.now(),
-    };
-
-    this.usernames.set(normalized, updated);
-    this.walletToUsername.set(Buffer.from(newOwner).toString("hex"), normalized);
-    this.appendHistory(normalized, updated);
-
-    return updated;
+  async transferUsername(): Promise<never> {
+    throw new Error("Username transfer disabled — removed to prevent squatting/flipping");
   }
 
   async getUsernameHistory(username: string): Promise<UsernameRecord[]> {
