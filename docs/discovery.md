@@ -27,9 +27,9 @@ May derive from:
 
 First implementation may limit mutuals to explicit shared groups and rooms.
 
-## Nearby discovery
+## Nearby discovery (AD-19)
 
-Optional and opt-in. **Not in MVP.**
+Optional and opt-in. **Post-MVP only** — not in first ship.
 
 No precise coordinates. Coarse cells only (venue / ~1 km / suburb / city).
 

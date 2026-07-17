@@ -65,7 +65,15 @@ Public room events may propagate through:
 - local client history
 
 Unlike private DMs, public events may be cached by relays because content is
-public. Retention policy is relay-defined and should be visible.
+public. Retention policy is relay-defined and must be visible.
+
+### Default retention (AD-17)
+
+```text
+default: drop room events after 24 hours of inactivity in that room
+relays may configure longer or shorter retention
+relays must advertise retention policy to clients
+```
 
 ```mermaid
 flowchart LR

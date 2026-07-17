@@ -6,6 +6,9 @@ Build: canonical event types, identity IDs, device certificates, signing and
 verification, encrypted local storage, message IDs, append-only conversation
 logs, protocol test vectors.
 
+**Implementation plan:**
+[`docs/superpowers/plans/2026-07-17-phase1-protocol-foundations.md`](superpowers/plans/2026-07-17-phase1-protocol-foundations.md)
+
 **Accept:**
 
 - deterministic encoding

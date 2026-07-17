@@ -48,14 +48,31 @@ Possible mechanisms:
 - optional refundable token deposits later
 - relay-level abuse throttling
 
-## First release
+## First release (AD-18)
 
-Use:
+**Locked: numeric score with published weights** (not gates-only).
+
+Use at least:
 
 - account age
-- per-device rate limits
-- recent-match limits
-- local block lists
-- reputation from completed sessions
+- completed random sessions
+- immediate disconnect rate
+- peer blocks received
+- per-device rate-limit compliance
+- local block lists / recent-match limits as hard gates beside the score
 
-Exact formula remains an [open decision](open-decisions.md).
+### v1 published weights (tunable; document changes)
+
+```text
+score =
+  0.35 * age_component        // days since identity root, capped
++ 0.35 * completed_component  // completed sessions, diminishing returns
++ 0.15 * continuity_component // 1 - immediate_disconnect_rate
++ 0.15 * block_component      // inverse of recent blocks received
+
+each component in [0, 1]
+match if score >= threshold (initial: 0.25) AND hard gates pass
+```
+
+Exact constants live in protocol parameters / client config; this doc is the
+canonical weight split until superseded. See OD-21 for fine-tuning.

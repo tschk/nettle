@@ -35,8 +35,15 @@ Used when direct NAT traversal fails. Relays transient encrypted traffic
 | Trusted contacts | Direct when possible |
 | Random matching | Private routed |
 | Public chatrooms | Relay-assisted gossip |
-| Attachments | Direct; routed only if explicitly supported later |
+| Attachments | Direct only (AD-20) |
+| Opt-in private sessions | Tor-style multi-hop when user enables (AD-21) |
 | NAT failure | Fallback relay |
+
+### Opt-in private routing (AD-21)
+
+Users may enable **Tor-style multi-hop** routing for sessions (not only random
+match). Default for trusted contacts remains direct. Random match defaults to
+private routed. Attachment **bodies** stay direct (AD-20) until a later lock.
 
 ```mermaid
 flowchart TD

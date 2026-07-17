@@ -10,7 +10,9 @@ Attachments are direct encrypted blob transfers.
 - resumable transfer
 - no permanent server storage
 - no automatic relay-side upload
-- optional routed transport later
+- **AD-20:** no onion/routed attachment bodies in first routing wave — **direct only**
+- session path may still use opt-in private routing (AD-21) for signalling;
+  blob bytes stay direct until a later AD explicitly allows routed blobs
 
 ## Offline behaviour
 

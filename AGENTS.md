@@ -23,6 +23,12 @@ started.
 - DM fanout only to online devices; history via P2P device sync (AD-7)
 - Max 1 username owned per wallet; free transfer/create with rate limits (AD-10)
 - Presence lease TTL 90s (AD-11); global presence visibility (AD-12)
+- Recovery: wallet ultimate; passkey re-auths devices (AD-16)
+- Room retention default 24h inactivity, relay-overridable (AD-17)
+- Reputation: published numeric weights (AD-18)
+- Attachments direct only (AD-20); opt-in multi-hop sessions (AD-21)
+- Open relay registry (AD-22); group creator on-chain (AD-23)
+- Profile: username + bio, no avatar (AD-24)
 - Schemas versioned; operations idempotent where possible
 - ISC license; no telemetry; no secret logging
 

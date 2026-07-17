@@ -16,7 +16,7 @@ identity protocol version
 relay registrations
 validator set
 protocol treasury
-optional group ownership
+group_id -> creator (AD-23)
 ```
 
 State transition logic for these records is the chain app — implemented in

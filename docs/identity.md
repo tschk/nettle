@@ -16,6 +16,15 @@ The wallet is final authority over:
 Accounts are not recoverable without the wallet or credentials the wallet
 explicitly authorised.
 
+### Recovery (AD-16)
+
+- **Wallet / root key** is ultimate recovery authority.
+- A **passkey registered by the wallet** may re-authenticate devices and
+  renew certificates without exporting the root key every time.
+- Passkey alone cannot transfer usernames or change root authority unless the
+  wallet previously authorised that capability.
+- Lost wallet without backup = lost account control.
+
 ## Username vs identity
 
 Usernames are:

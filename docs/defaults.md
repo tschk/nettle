@@ -14,7 +14,7 @@ passkey policy: every interactive app open (AD-6)
 device certificate: valid until process death (AD-6)
 dm fanout: online recipient devices only (AD-7)
 device history: P2P sync between own devices
-recovery: wallet-authorised only
+recovery: wallet root ultimate; passkey re-auths devices (AD-16)
 message history: local only
 offline message location: sender device
 presence retry interval: 30 minutes
@@ -25,13 +25,20 @@ receipts: delivered only
 read receipts: disabled
 message editing: disabled
 remote deletion: disabled
-attachments: direct encrypted transfer
+attachments: direct encrypted transfer only (AD-20)
 direct messages: end-to-end encrypted
-private groups: creator controlled
+private groups: creator controlled; group_id→creator on-chain (AD-23)
 public chatrooms: no owner
+public room retention default: 24h inactivity; relay-overridable (AD-17)
 public room moderation: local and relay policy only
-random matching: reputation gated
-routing: direct by default, private routed for randoms
+profile: username + bio; no avatar (AD-24)
+random matching: numeric reputation with published weights (AD-18)
+routing: direct by default; private routed for randoms; opt-in multi-hop (AD-21)
+nearby discovery: post-MVP (AD-19)
+relay admission: open registry + checksums (AD-22)
+relay incentives v1: grants only (AD-15)
+token supply/emissions: deferred past MVP (AD-13)
+validator selection: stake rank + power cap; min 4; target 7–21 (AD-14)
 source code: fully open source
 user payment: none required
 license: ISC

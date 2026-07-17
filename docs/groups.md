@@ -11,6 +11,12 @@ Creator can:
 - close the group
 - optionally transfer ownership later (not required in MVP)
 
+### On-chain record (AD-23)
+
+Group identity may be recorded on-chain as `group_id -> creator` (optional
+metadata). Membership and messages stay off-chain. Chain record supports
+discovery and ownership claims; encryption/membership still MLS off-chain.
+
 ## Membership events
 
 Signed group events:

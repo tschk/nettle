@@ -118,6 +118,7 @@ nettle/
 | [docs/architecture.md](docs/architecture.md) | Layers, topology, data flow |
 | [docs/principles.md](docs/principles.md) | Product principles |
 | [docs/identity.md](docs/identity.md) | Wallet, username, passkeys, devices |
+| [docs/profiles.md](docs/profiles.md) | Bio profile fields (AD-24) |
 | [docs/chain.md](docs/chain.md) | On-chain scope, token, treasury |
 | [docs/consensus.md](docs/consensus.md) | HotStuff consensus (AD-9) |
 | [docs/messaging.md](docs/messaging.md) | DMs, offline queue, receipts, ordering |

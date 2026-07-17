@@ -9,12 +9,14 @@ Canon for product, protocol, and implementation direction.
 1. [Architecture](architecture.md) — system layers and flows
 2. [Principles](principles.md) — non-negotiables
 3. [MVP](mvp.md) + [Phases](phases.md) — what ships first
+4. [Phase 1 plan](superpowers/plans/2026-07-17-phase1-protocol-foundations.md) — implementation tasks
 4. [Defaults](defaults.md) — product defaults
 5. [Open decisions](open-decisions.md) — intentionally unresolved
 
 ## Identity and chain
 
-- [Identity](identity.md) — wallet root, usernames, passkeys, devices
+- [Identity](identity.md) — wallet root, usernames, passkeys, devices, recovery
+- [Profiles](profiles.md) — bio (no avatar) AD-24
 - [Chain](chain.md) — on-chain vs off-chain, treasury, token purpose
 - [Consensus](consensus.md) — NettleHotstuff (chained HotStuff, AD-9)
 
