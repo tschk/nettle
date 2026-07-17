@@ -67,7 +67,7 @@ Five layers:
 2. **P2P transport** — DM sessions, attachments, room gossip, device sync
 3. **Discovery / presence** — username resolve, online leases, matching
 4. **Relays** — signalling, NAT assist, optional onion path, public rooms
-5. **Blockchain** — scarce authoritative state only (not private chat)
+5. **Blockchain** — own chain (inauguration `.in` state machine); scarce authoritative state only (not private chat)
 
 Full system map: [`docs/architecture.md`](docs/architecture.md)
 

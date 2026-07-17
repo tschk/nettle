@@ -5,7 +5,9 @@ implementation.
 
 | ID | Decision | Notes |
 |---|---|---|
-| OD-01 | Production blockchain consensus | PoS app chain vs rollup vs other |
+| OD-01 | ~~Production blockchain platform~~ **LOCKED AD-1** | **Own chain**; app logic in inauguration `.in` (`../inauguration`). Not Substrate/Cosmos product. Consensus algorithm still open (OD-01b). |
+| OD-01b | Consensus algorithm | e.g. Tendermint-style BFT, HotStuff-like, custom PoS — pick before multi-validator |
+| OD-01c | Chain packaging | monorepo `crates/` + `chain/` `.in` tree vs separate repo |
 | OD-02 | Exact token supply and emissions | Deferred past MVP |
 | OD-03 | Validator selection | |
 | OD-04 | Automatic relay incentives | Deferred; grants first |

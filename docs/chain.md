@@ -18,6 +18,10 @@ protocol treasury
 optional group ownership
 ```
 
+State transition logic for these records is the chain app — implemented in
+`.in` (inauguration), verified by tests/vectors, exposed to clients over the
+chain API.
+
 ## Off-chain (must stay off)
 
 - private messages
@@ -63,22 +67,35 @@ are hard to secure.
 
 Consensus is a **separate module**.
 
-First implementation may use any of:
+### Locked decision (AD-1)
 
-1. minimal purpose-built proof-of-stake chain
-2. application-specific rollup
-3. temporary development chain with pluggable consensus
-4. deterministic local replicated state machine until consensus exists
+Nettle runs a **purpose-built chain**, not a third-party L1/L2 product.
 
-Chat development must proceed before production consensus is complete.
+Chain application logic and (as language surface matures) runtime pieces are
+written in **inauguration** (`.in` / Core IR) from the sibling project
+[`inauguration`](https://github.com/tschk/inauguration) at `../inauguration`.
+
+Messaging still talks only through `nettle-chain-client`. Chat work must not
+block on full consensus maturity — a local single-node / deterministic
+executor of the same state machine is valid until multi-validator consensus
+lands.
 
 ```mermaid
 flowchart LR
   Msg[Messaging / client] --> CCI[chain-client interface]
-  CCI --> Dev[Dev state machine]
-  CCI --> Pos[PoS runtime]
-  CCI --> Rollup[Rollup adapter]
+  CCI --> Local[Single-node .in state machine]
+  CCI --> Net[Multi-validator consensus]
+  Local --> SM[Username + identity state]
+  Net --> SM
+  SM --> InLang[inauguration .in sources]
 ```
 
-See [open-decisions.md](open-decisions.md) for production consensus, emissions,
+### Why own chain + inauguration
+
+- scarce state surface is small (usernames, identity roots, relays, treasury)
+- protocol control without foreign L1 policy
+- same org owns language toolchain and network
+- independent chain implementers still possible via open specs + ISC
+
+See [open-decisions.md](open-decisions.md) for consensus algorithm, emissions,
 and validator selection.

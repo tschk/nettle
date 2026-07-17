@@ -50,12 +50,16 @@ Plus supporting crates listed in the root README.
 
 ## Blockchain
 
-Options:
+**Locked:** purpose-built Nettle chain.
 
-- Rust application chain
-- CometBFT-compatible state machine
-- Substrate-based chain
-- custom prototype consensus for development only
+- Application state machine and chain logic: **inauguration** `.in`
+  (sibling repo `../inauguration`, Core IR → native/JIT)
+- Client boundary: Rust `nettle-chain-client` (or equivalent) over stable API
+- Host/networking/validator process: may combine `.in` runtime with thin
+  Rust (or native) networking until `.in` surface covers it
+- Single-node deterministic executor first; multi-validator consensus later
+
+Not using Substrate / Cosmos SDK / foreign L1 as the product chain.
 
 Chain remains isolated behind a clean interface.
 

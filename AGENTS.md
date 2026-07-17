@@ -24,11 +24,13 @@ started.
 
 ## Stack direction
 
-- Rust workspace monorepo
+- Rust workspace monorepo for node/relay/cli (default)
 - Tokio, QUIC/WebRTC transports, CBOR, encrypted SQLite
 - Ed25519 / X25519 / HKDF / XChaCha20-Poly1305 or AES-GCM
 - Double Ratchet for DMs; OpenMLS for groups
-- Chain behind `nettle-chain-client`; runtime isolated
+- **Own chain** — application logic in inauguration `.in`
+  (`../inauguration`); clients only via `nettle-chain-client`
+- Chain runtime isolated; single-node executor OK until consensus
 
 ## Doc map
 

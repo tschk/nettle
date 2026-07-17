@@ -89,6 +89,10 @@ Globally shared scarce or authoritative state only:
 **Never:** private messages, attachments, presence history, contact graphs,
 exact location, read state, conversation metadata.
 
+**Locked:** Nettle’s own chain. State transition logic in **inauguration**
+`.in` (`../inauguration`). Clients use `chain-client` only — no direct
+dependency on consensus internals. See [chain.md](chain.md).
+
 ## Connection modes
 
 ```mermaid

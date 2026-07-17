@@ -26,4 +26,7 @@ routing: direct by default, private routed for randoms
 source code: fully open source
 user payment: none required
 license: ISC
+chain: purpose-built Nettle chain
+chain app language: inauguration (.in)
+chain client boundary: nettle-chain-client
 ```
