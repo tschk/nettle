@@ -6,7 +6,18 @@ export {
   onDirectMessage,
   deriveConversationId,
   deriveConversationKey,
+  DM_WIRE_X3DH,
 } from "./dm.js";
+
+export {
+  setupLocalPrekeys,
+  publishBundle,
+  fetchBundle,
+  unpublishBundle,
+  clearPrekeyDirectory,
+  getLocalPrekeys,
+  refreshPublishedBundle,
+} from "./prekeys.js";
 
 export {
   initInitiator,
@@ -54,6 +65,10 @@ export {
   removeMember,
   sendGroupMessage,
   onGroupMessage,
+  registerMemberDh,
+  applyGroupEpochMessage,
+  listGroupMembers,
+  clearGroupMembership,
 } from "./groups.js";
 
 export { QueueManager } from "./queue-manager.js";
