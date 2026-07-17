@@ -31,6 +31,7 @@ chain app language: inauguration (.in)
 chain client boundary: nettle-chain-client
 language split: chain app .in; node/relay/messaging/cli Rust
 repo packaging: monorepo (crates/ + chain/)
-wire encoding: CBOR (deterministic profile TBD)
+wire encoding: CBOR
+cbor determinism: CDE (RFC 8949 §4.2)
 schema language: CDDL
 ```

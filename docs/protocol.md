@@ -30,20 +30,22 @@ nettle_event {
 
 ## Encoding (AD-4)
 
-**Locked: H2 — CBOR wire + CDDL schemas.**
+**Locked: H2 — CBOR wire + CDDL schemas + CDE determinism (AD-4 / AD-4b).**
 
 | Layer | Choice |
 |---|---|
 | Wire bytes | CBOR |
-| Determinism | Single locked profile (AD-4b: CDE vs dCBOR — still open) |
+| Determinism | **CDE** (RFC 8949 §4.2 Concise Deterministic Encoding) |
 | Human/schema | CDDL describing event shapes |
 | Debug tooling | Optional CBOR → diagnostic JSON (not a second protocol) |
 | Attachment bodies | Opaque encrypted blobs — not CBOR structure |
 
 Rejected for the signed path: Protobuf (non-canonical encodings), dual
-MessagePack+CBOR hybrid, FlatBuffers for events.
+MessagePack+CBOR hybrid, FlatBuffers for events, dCBOR-as-required-profile
+(may revisit only if Gordian-style interop appears).
 
-Signatures cover canonical CBOR of the event excluding the signature field.
+Signatures cover **CDE** bytes of the event excluding the signature field.
+All implementations must emit and verify the same CDE encoding.
 
 ## Rules
 
