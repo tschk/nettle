@@ -1,6 +1,16 @@
 name = "nexnet-relay"
 main = "src/index.ts"
 compatibility_date = "2026-01-01"
+account_id = "fc62a6e6528bec6d3d81c3bf8967ceeb"
+workers_dev = true
+
+[[routes]]
+pattern = "nexnet.tsc.hk"
+custom_domain = true
+
+[[routes]]
+pattern = "relay.nexnet.tsc.hk"
+custom_domain = true
 
 [[durable_objects.bindings]]
 name = "RELAY"

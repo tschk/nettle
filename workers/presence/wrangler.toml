@@ -1,9 +1,15 @@
 name = "nexnet-presence"
 main = "src/index.ts"
 compatibility_date = "2026-01-01"
+account_id = "fc62a6e6528bec6d3d81c3bf8967ceeb"
+workers_dev = true
 
 [vars]
-ALLOW_UNSIGNED_LEASES = "1"
+ALLOW_UNSIGNED_LEASES = "0"
+
+[[routes]]
+pattern = "presence.nexnet.tsc.hk"
+custom_domain = true
 
 [[durable_objects.bindings]]
 name = "PRESENCE"
