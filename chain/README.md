@@ -35,7 +35,7 @@ Constants:
 ## Run self-check
 
 ```bash
-in execute --path chain/nexnet_chain.in
+in execute chain/nexnet_chain.in
 # expect exit / return 0
 ```
 
