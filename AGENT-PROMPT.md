@@ -26,7 +26,7 @@ grep -r "nettle" --include='*.ts' --include='*.tsx' --include='*.json' --include
 
 Fix any remaining occurrences to "nexnet" (case-sensitive: nettle→nexnet, Nettle→Nexnet, NETTLE→NEXNET, @nettle/→@nexnet/).
 
-## Current state (200+ tests passing)
+## Current state (207 tests passing)
 
 | Package | What | Status |
 |---|---|---|
@@ -82,7 +82,9 @@ Fix any remaining occurrences to "nexnet" (case-sensitive: nettle→nexnet, Nett
 ### 1. Double Ratchet for DM forward secrecy — ✅ done
 
 `packages/client/src/double-ratchet.ts` wired into `dm.ts`. X25519 + HKDF + XChaCha20.
-`setSessionBackend` + `@nexnet/storage` `SessionStore` for disk. X3DH in `x3dh.ts`.
+`setSessionBackend` + `@nexnet/storage` `SessionStore` for disk.
+X3DH: `x3dh.ts` + `prekeys.ts`; first DM uses X3DH when both sides published bundles (wire v2), else conversation HKDF.
+Group `addMember`/`removeMember` rotate epoch + wrap secrets.
 
 ### 2. MLS for group encryption — ✅ simplified epoch secrets
 
@@ -110,7 +112,7 @@ bun install
 bun test --workspace
 ```
 
-Expected: 200+ tests passing.
+Expected: 207+ tests passing.
 
 ## Key files
 
