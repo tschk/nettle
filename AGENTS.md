@@ -19,7 +19,7 @@ started.
 - Chain holds scarce public state only — never private chat content
 - Messages immutable: no edit / unsend protocol
 - Delivered receipts only; no read receipts / last-seen / typing in v1
-- Passkey on every interactive app open (AD-6); background cert TTL TBD
+- Passkey on every interactive app open; device cert until process death (AD-6)
 - Schemas versioned; operations idempotent where possible
 - ISC license; no telemetry; no secret logging
 

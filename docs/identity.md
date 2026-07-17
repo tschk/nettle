@@ -107,24 +107,33 @@ device_certificate {
 
 Product direction: no complex user-facing device revocation UI in v1.
 
-### Session policy (AD-6 — partial)
+### Session policy (AD-6)
 
-**Locked — foreground:** every interactive app open requires a **fresh passkey
-authentication** before messaging keys are usable. No “stay logged in” across
-cold starts without passkey.
+**Locked:**
 
-Flow on open:
+1. **Every interactive app open** → fresh **passkey** assertion before
+   messaging keys are usable. No stay-logged-in across cold starts.
+2. **While process stays alive** (including background) → device certificate
+   remains valid until **process death**. No wall-clock TTL for the first
+   design.
+3. **Process exit / kill / crash** → next open requires passkey again.
+
+Flow:
 
 ```text
 app open (foreground)
   -> passkey assertion
-    -> issue/renew short-lived device certificate
+    -> issue device certificate (valid for process lifetime)
       -> messaging session keys
+
+process still running (background OK)
+  -> certificate remains usable
+
+process dies
+  -> certificate dead; next open needs passkey
 ```
 
-**Open — background:** certificate lifetime / renew rules while the process
-stays alive without a new interactive open (see OD-07b).
-
-A stolen device that cannot complete passkey reauth must lose the ability to
-renew. Protocol still supports root-level invalidation of compromised
-credentials even if the first client hides that complexity.
+A stolen unlocked device with a live process can use the cert until the
+process dies; cold start still needs passkey. Protocol still supports
+root-level invalidation of compromised credentials even if the first client
+hides that complexity.

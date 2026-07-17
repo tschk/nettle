@@ -4,8 +4,8 @@ A Nettle account may run on multiple devices.
 
 ## Login
 
-Each device authenticates with a passkey and receives a short-lived device
-certificate.
+Each device authenticates with a passkey on every interactive app open and
+receives a device certificate valid until process death (AD-6).
 
 ## Message fanout
 
