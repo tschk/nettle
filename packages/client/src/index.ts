@@ -20,6 +20,17 @@ export {
 } from "./prekeys.js";
 
 export {
+  publishBundleRemote,
+  fetchBundleRemote,
+  removeBundleRemote,
+  bundleToNetwork,
+  bundleFromNetwork,
+} from "./prekey-network.js";
+export type { NetworkPrekeyBundle } from "./prekey-network.js";
+
+export { setDirectTransport, getDirectTransport, trySendDirect } from "./transport.js";
+
+export {
   initInitiator,
   initResponder,
   seal as ratchetSeal,

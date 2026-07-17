@@ -38,10 +38,24 @@ type RouteHandler = (
 
 // ── Durable Object: PresenceTracker ──────────────────────────────────
 
+/** X3DH prekey bundle (hex fields for JSON) */
+interface PrekeyBundleData {
+  identityId: string;
+  identityDhPublic: string;
+  signedPrekeyPublic: string;
+  signedPrekeySig: string;
+  identitySignPublic: string;
+  oneTimePrekeyPublic?: string;
+  oneTimePrekeyId?: number;
+  updatedAt: number;
+}
+
 export class PresenceTracker {
   private state: DurableObjectState;
   // identityId -> lease
   private leases = new Map<string, PresenceLeaseData>();
+  // identityId -> prekey bundle (no private keys)
+  private prekeys = new Map<string, PrekeyBundleData>();
   // active SSE/WebSocket subscribers
   private subscriptions = new Set<WebSocket>();
   private cleanupInterval: ReturnType<typeof setInterval> | null = null;
@@ -62,10 +76,17 @@ export class PresenceTracker {
         return this.handleSubscribe(request);
       case "/do/remove":
         return this.handleRemove(url);
+      case "/do/prekeys/publish":
+        return this.handlePrekeyPublish(request);
+      case "/do/prekeys/get":
+        return this.handlePrekeyGet(url);
+      case "/do/prekeys/remove":
+        return this.handlePrekeyRemove(url);
       case "/do/status":
         return jsonResponse({
           leases: this.leases.size,
           subscribers: this.subscriptions.size,
+          prekeys: this.prekeys.size,
         });
       default:
         return jsonResponse({ error: "not found" }, 404);
@@ -198,6 +219,77 @@ export class PresenceTracker {
     this.subscriptions.delete(ws);
   }
 
+  // ── Prekeys (X3DH public bundles only) ─────────────────────────────
+
+  private async handlePrekeyPublish(request: Request): Promise<Response> {
+    let body: PrekeyBundleData;
+    try {
+      body = (await request.json()) as PrekeyBundleData;
+    } catch {
+      return jsonResponse({ error: "invalid JSON" }, 400);
+    }
+    if (
+      !body.identityId ||
+      !body.identityDhPublic ||
+      !body.signedPrekeyPublic ||
+      !body.signedPrekeySig ||
+      !body.identitySignPublic
+    ) {
+      return jsonResponse(
+        {
+          error:
+            "identityId, identityDhPublic, signedPrekeyPublic, signedPrekeySig, identitySignPublic required",
+        },
+        400
+      );
+    }
+    // Verify signed prekey over SPK bytes
+    try {
+      const pk = hexToBytes(body.identitySignPublic);
+      const sig = hexToBytes(body.signedPrekeySig);
+      const spk = hexToBytes(body.signedPrekeyPublic);
+      if (!ed25519.verify(sig, spk, pk)) {
+        return jsonResponse({ error: "invalid signed prekey signature" }, 403);
+      }
+    } catch {
+      return jsonResponse({ error: "invalid prekey key material" }, 400);
+    }
+
+    const stored: PrekeyBundleData = {
+      identityId: body.identityId,
+      identityDhPublic: body.identityDhPublic,
+      signedPrekeyPublic: body.signedPrekeyPublic,
+      signedPrekeySig: body.signedPrekeySig,
+      identitySignPublic: body.identitySignPublic,
+      oneTimePrekeyPublic: body.oneTimePrekeyPublic,
+      oneTimePrekeyId: body.oneTimePrekeyId,
+      updatedAt: Date.now(),
+    };
+    this.prekeys.set(body.identityId, stored);
+    return jsonResponse({ ok: true, updatedAt: stored.updatedAt });
+  }
+
+  private handlePrekeyGet(url: URL): Response {
+    const identityId = url.searchParams.get("identityId");
+    if (!identityId) {
+      return jsonResponse({ error: "identityId param required" }, 400);
+    }
+    const bundle = this.prekeys.get(identityId);
+    if (!bundle) {
+      return jsonResponse({ error: "not found" }, 404);
+    }
+    return jsonResponse(bundle);
+  }
+
+  private handlePrekeyRemove(url: URL): Response {
+    const identityId = url.searchParams.get("identityId");
+    if (!identityId) {
+      return jsonResponse({ error: "identityId param required" }, 400);
+    }
+    const removed = this.prekeys.delete(identityId);
+    return jsonResponse({ ok: true, removed });
+  }
+
   // ── Remove ─────────────────────────────────────────────────────────
 
   private handleRemove(url: URL): Response {
@@ -274,6 +366,7 @@ export class PresenceTracker {
 const routes: Record<string, RouteHandler> = {
   "POST /presence/publish": handlePublish,
   "GET /presence/subscribe": handleSubscribe,
+  "POST /prekeys/publish": handlePrekeyPublishHttp,
 };
 
 export default {
@@ -301,6 +394,18 @@ export default {
         }
         if (request.method === "DELETE") {
           return addCorsHeaders(await handleRemoveIdentity(identityId, env));
+        }
+      }
+
+      // /prekeys/:identityId (GET or DELETE)
+      const prekeyMatch = url.pathname.match(/^\/prekeys\/([^/]+)$/);
+      if (prekeyMatch) {
+        const identityId = prekeyMatch[1];
+        if (request.method === "GET") {
+          return addCorsHeaders(await handlePrekeyGetHttp(identityId, env));
+        }
+        if (request.method === "DELETE") {
+          return addCorsHeaders(await handlePrekeyRemoveHttp(identityId, env));
         }
       }
 
@@ -349,6 +454,40 @@ async function handleRemoveIdentity(
 ): Promise<Response> {
   const stub = getPresenceStub(env);
   return stub.fetch(`https://presence/do/remove?identityId=${encodeURIComponent(identityId)}`);
+}
+
+async function handlePrekeyPublishHttp(
+  request: Request,
+  env: Env,
+  _ctx: ExecutionContext
+): Promise<Response> {
+  const body = await request.text();
+  const stub = getPresenceStub(env);
+  return stub.fetch("https://presence/do/prekeys/publish", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body,
+  });
+}
+
+async function handlePrekeyGetHttp(
+  identityId: string,
+  env: Env
+): Promise<Response> {
+  const stub = getPresenceStub(env);
+  return stub.fetch(
+    `https://presence/do/prekeys/get?identityId=${encodeURIComponent(identityId)}`
+  );
+}
+
+async function handlePrekeyRemoveHttp(
+  identityId: string,
+  env: Env
+): Promise<Response> {
+  const stub = getPresenceStub(env);
+  return stub.fetch(
+    `https://presence/do/prekeys/remove?identityId=${encodeURIComponent(identityId)}`
+  );
 }
 
 function getPresenceStub(env: Env): DurableObjectStub {

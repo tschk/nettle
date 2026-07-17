@@ -34,6 +34,7 @@ import {
   refreshPublishedBundle,
 } from "./prekeys.js";
 import { x3dhInitiate, x3dhRespond } from "./x3dh.js";
+import { trySendDirect } from "./transport.js";
 
 const DOMAIN_CONVERSATION_ID = "nexnet conversation id v1";
 const DOMAIN_CONVERSATION_KEY = "nexnet dm conversation key v1";
@@ -137,7 +138,7 @@ export async function sendDirectMessage(
     ciphertext = ratchetSeal(client.crypto, existing, payloadCde, aad);
     saveSession(sessionKey, existing);
   } else {
-    // Prefer X3DH when peer bundle + our identity DH exist
+    // Prefer X3DH when peer bundle (local cache or prior fetch) + our material exist
     const local = getLocalPrekeys(client.identityId);
     const remote = fetchBundle(recipientId);
 
@@ -202,12 +203,16 @@ export async function sendDirectMessage(
     signature,
   };
 
+  const recipientHex = Buffer.from(recipientId).toString("hex");
+  const encoded = client.codec.encode(envelope);
+
+  // Prefer open WebRTC data channel (AD-20 style direct)
+  if (trySendDirect(recipientHex, encoded)) {
+    return messageId;
+  }
+
   if (client.online) {
-    const recipientHex = Buffer.from(recipientId).toString("hex");
-    const sent = client.sendDm(
-      recipientHex,
-      Array.from(client.codec.encode(envelope))
-    );
+    const sent = client.sendDm(recipientHex, Array.from(encoded));
     if (sent) return messageId;
   }
 

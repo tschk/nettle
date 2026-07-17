@@ -232,6 +232,12 @@ export class PeerManager {
         typeof raw === "string"
           ? new TextEncoder().encode(raw)
           : new Uint8Array(raw);
+      // Default: treat binary as DM envelope CBOR → emit dm event
+      try {
+        this.client.emit("dm", { envelope: Array.from(bytes) });
+      } catch {
+        // ignore emit failures
+      }
       this.onMessage?.(session.peerIdentityHex, bytes);
     };
   }

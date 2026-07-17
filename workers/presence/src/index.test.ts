@@ -177,8 +177,79 @@ describe("PresenceTracker", () => {
     }));
 
     const resp = await tracker.fetch(makeRequest("/do/status"));
-    const body = await resp.json() as { leases: number; subscribers: number };
+    const body = await resp.json() as { leases: number; subscribers: number; prekeys?: number };
     expect(body.leases).toBe(1);
     expect(body.subscribers).toBe(0);
+    expect(body.prekeys ?? 0).toBe(0);
+  });
+});
+
+describe("PresenceTracker prekeys", () => {
+  let tracker: PresenceTracker;
+
+  beforeEach(() => {
+    tracker = new PresenceTracker(createMockState(), createMockEnv());
+  });
+
+  async function validBundle(identityId = "aa".repeat(32)) {
+    const { ed25519 } = await import("@noble/curves/ed25519");
+    const sk = ed25519.utils.randomPrivateKey();
+    const pk = ed25519.getPublicKey(sk);
+    const spk = new Uint8Array(32).fill(7);
+    const sig = ed25519.sign(spk, sk);
+    const ik = new Uint8Array(32).fill(3);
+    return {
+      identityId,
+      identityDhPublic: Buffer.from(ik).toString("hex"),
+      signedPrekeyPublic: Buffer.from(spk).toString("hex"),
+      signedPrekeySig: Buffer.from(sig).toString("hex"),
+      identitySignPublic: Buffer.from(pk).toString("hex"),
+      oneTimePrekeyPublic: Buffer.from(new Uint8Array(32).fill(9)).toString("hex"),
+      oneTimePrekeyId: 1,
+    };
+  }
+
+  test("publish and get prekey bundle", async () => {
+    const bundle = await validBundle();
+    const pub = await tracker.fetch(jsonPost("/do/prekeys/publish", bundle));
+    expect(pub.status).toBe(200);
+    const body = await pub.json() as { ok: boolean };
+    expect(body.ok).toBe(true);
+
+    const get = await tracker.fetch(
+      makeRequest(`/do/prekeys/get?identityId=${bundle.identityId}`)
+    );
+    expect(get.status).toBe(200);
+    const got = await get.json() as { identityDhPublic: string; oneTimePrekeyId: number };
+    expect(got.identityDhPublic).toBe(bundle.identityDhPublic);
+    expect(got.oneTimePrekeyId).toBe(1);
+  });
+
+  test("reject bad signature", async () => {
+    const bundle = await validBundle();
+    bundle.signedPrekeySig = "00".repeat(64);
+    const pub = await tracker.fetch(jsonPost("/do/prekeys/publish", bundle));
+    expect(pub.status).toBe(403);
+  });
+
+  test("get missing returns 404", async () => {
+    const get = await tracker.fetch(
+      makeRequest("/do/prekeys/get?identityId=missing")
+    );
+    expect(get.status).toBe(404);
+  });
+
+  test("remove prekey", async () => {
+    const bundle = await validBundle();
+    await tracker.fetch(jsonPost("/do/prekeys/publish", bundle));
+    const del = await tracker.fetch(
+      makeRequest(`/do/prekeys/remove?identityId=${bundle.identityId}`)
+    );
+    const body = await del.json() as { removed: boolean };
+    expect(body.removed).toBe(true);
+    const get = await tracker.fetch(
+      makeRequest(`/do/prekeys/get?identityId=${bundle.identityId}`)
+    );
+    expect(get.status).toBe(404);
   });
 });
