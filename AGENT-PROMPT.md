@@ -26,7 +26,7 @@ grep -r "nettle" --include='*.ts' --include='*.tsx' --include='*.json' --include
 
 Fix any remaining occurrences to "nexnet" (case-sensitive: nettle→nexnet, Nettle→Nexnet, NETTLE→NEXNET, @nettle/→@nexnet/).
 
-## Current state (207 tests passing)
+## Current state (215 tests passing)
 
 | Package | What | Status |
 |---|---|---|
@@ -85,6 +85,8 @@ Fix any remaining occurrences to "nexnet" (case-sensitive: nettle→nexnet, Nett
 `setSessionBackend` + `@nexnet/storage` `SessionStore` for disk.
 X3DH: `x3dh.ts` + `prekeys.ts`; first DM uses X3DH when both sides published bundles (wire v2), else conversation HKDF.
 Group `addMember`/`removeMember` rotate epoch + wrap secrets.
+Presence: `POST /prekeys/publish`, `GET /prekeys/:id` (signed SPK verified). Client: `publishBundleRemote` / `fetchBundleRemote`.
+Direct DM: `setDirectTransport(peerManager)` — open data channel preferred over relay; inbound channel → `dm` event.
 
 ### 2. MLS for group encryption — ✅ simplified epoch secrets
 
@@ -112,7 +114,7 @@ bun install
 bun test --workspace
 ```
 
-Expected: 207+ tests passing.
+Expected: 215+ tests passing.
 
 ## Key files
 
