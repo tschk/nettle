@@ -220,10 +220,13 @@ Do **not** use exact local arrival time as consensus-visible ordering.
 Token may fund validators without user fees. Free writes need quotas, e.g.:
 
 ```text
-username registration: one per identity per 24 hours
+username ownership: max 1 per identity (AD-10)
+username registration: fails if identity already owns one;
+                       also rate-limited (e.g. one create / 24 hours)
 identity updates: limited per epoch
-transfers: sequence-number protected; limited per block/account
-general: PoW stamp or renewable account allowance
+transfers: sequence-number protected; limited per block/account;
+           frees ownership slot for sender
+general: PoW stamp or renewable account allowance (optional later)
 ```
 
 Validators may receive emissions:

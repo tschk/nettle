@@ -35,7 +35,8 @@ reputation_credential {
 
 ## Sybil resistance
 
-Accounts and usernames are free → cheap identity creation.
+Accounts free; usernames free but **max 1 owned per identity** (AD-10) →
+cheap multi-wallet Sybil still possible, harder single-wallet hoarding.
 
 Possible mechanisms:
 

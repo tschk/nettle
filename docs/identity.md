@@ -59,13 +59,30 @@ nettle1abc...
 
 ## Username reservation semantics
 
-- one active owner at a time
+- one active owner at a time **per username**
+- **AD-10:** each wallet / identity_id may **own at most one username at a time**
 - ownership transferable repeatedly
+- after transfer, previous owner holds zero usernames and **may create** another
+  (subject to rate limits) — still only one held at once
 - ownership history immutable
 - previous owners retain no control after transfer
 - historical messages preserve signing identity
 - operators cannot silently reassign names
 - prohibited / reserved names defined at genesis or transparent governance
+- **no** hardware / device mint lock (breaks multi-device, CLI, privacy)
+
+### Anti-spam (AD-10)
+
+```text
+max owned per identity: 1
+create: free, FCFS, unique
+create rate: limited (see consensus / chain params; e.g. 1 create / 24h)
+transfer: allowed; moves the single ownership slot
+hardware binding: none
+```
+
+Speculators can still use many wallets. Honest users cannot hoard many names
+on one account. Device attestation is not a registration requirement.
 
 ## Passkeys
 

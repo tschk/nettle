@@ -4,7 +4,10 @@ Unless superseded by a later specification:
 
 ```text
 username registration: free, first come first served
-username transfer: on-chain
+username ownership: max 1 per wallet/identity (AD-10)
+username transfer: on-chain (frees slot for a new create)
+username create rate: limited (e.g. 1 / 24h per identity)
+username hardware lock: none
 account authority: wallet
 login: passkey
 passkey policy: every interactive app open (AD-6)

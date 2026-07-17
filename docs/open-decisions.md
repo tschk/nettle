@@ -12,7 +12,7 @@ implementation.
 | OD-02 | Exact token supply and emissions | Deferred past MVP |
 | OD-03 | Validator selection | |
 | OD-04 | Automatic relay incentives | Deferred; grants first |
-| OD-05 | Username anti-spam proof | Free UX vs tiny PoW/deposit |
+| OD-05 | ~~Username anti-spam~~ **LOCKED AD-10** | **Max 1 username owned per wallet/identity**; free create+transfer; rate-limited creates; no hardware mint lock. PoW/deposit still optional later |
 | OD-06 | Passkey-to-wallet recovery flow | Exact ceremony |
 | OD-07 | ~~Device cert / session policy~~ **LOCKED AD-6** | Passkey on every interactive app open; cert valid until process death (no wall-clock TTL v1) |
 | OD-08 | ~~Multi-device DM fanout~~ **LOCKED AD-7** | Live DMs only to **online** recipient devices; other devices get history via P2P sync |

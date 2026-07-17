@@ -10,6 +10,7 @@ It must **not** contain private chat content.
 username -> owner wallet
 username ownership history
 wallet -> identity root
+wallet -> at most one owned username (AD-10)
 wallet -> authorised passkey commitments
 identity protocol version
 relay registrations
@@ -21,6 +22,10 @@ optional group ownership
 State transition logic for these records is the chain app — implemented in
 `.in` (inauguration), verified by tests/vectors, exposed to clients over the
 chain API.
+
+**AD-10:** `register_username` fails if the identity already owns a username.
+`transfer_username` moves ownership; the sender may register again only after
+they own zero, still rate-limited.
 
 ## Off-chain (must stay off)
 
