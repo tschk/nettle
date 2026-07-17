@@ -9,6 +9,8 @@ account authority: wallet
 login: passkey
 passkey policy: every interactive app open (AD-6)
 device certificate: valid until process death (AD-6)
+dm fanout: online recipient devices only (AD-7)
+device history: P2P sync between own devices
 recovery: wallet-authorised only
 message history: local only
 offline message location: sender device

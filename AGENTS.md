@@ -20,6 +20,7 @@ started.
 - Messages immutable: no edit / unsend protocol
 - Delivered receipts only; no read receipts / last-seen / typing in v1
 - Passkey on every interactive app open; device cert until process death (AD-6)
+- DM fanout only to online devices; history via P2P device sync (AD-7)
 - Schemas versioned; operations idempotent where possible
 - ISC license; no telemetry; no secret logging
 

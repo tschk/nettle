@@ -76,8 +76,11 @@ Duplicate packets must never create duplicate visible messages.
 
 ## Delivered receipt
 
-Means: **at least one currently authenticated recipient device has stored
-the message locally.**
+Means: **at least one currently authenticated online recipient device has
+stored the message locally.**
+
+Per AD-7, senders fan out only to devices with live presence; offline own
+devices catch up via history sync, not sender fanout.
 
 Does **not** mean opened or read.
 

@@ -7,15 +7,25 @@ A Nettle account may run on multiple devices.
 Each device authenticates with a passkey on every interactive app open and
 receives a device certificate valid until process death (AD-6).
 
-## Message fanout
+## Message fanout (AD-7)
 
-When a sender knows multiple active recipient devices, it may encrypt and
-deliver to each active device.
+**Locked:** fan out live DMs only to recipient devices that are **online**
+(valid presence lease), not to every historically authorised device.
 
-A message is **delivered** after at least one authorised recipient device
-stores it.
+- Sender encrypts per online recipient device session
+- Offline recipient devices do **not** receive a sender-side fanout copy
+- A message is **delivered** after at least one authorised online device stores it
+- Other own-account devices obtain history via **device history sync** when
+  they are online together (P2P), not via sender re-fanout to offline devices
 
-Whether every device always receives every DM is an [open decision](open-decisions.md).
+```mermaid
+flowchart TD
+  S[Sender] --> On{Recipient devices with live presence}
+  On -->|device A online| A[Encrypt + deliver A]
+  On -->|device B offline| Skip[Skip fanout]
+  A --> Ack[Delivered if any device ACKs]
+  B2[Device B later online] --> Sync[P2P history sync with A]
+```
 
 ## Device history transfer
 
